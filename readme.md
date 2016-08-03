@@ -1,5 +1,5 @@
-OV5640 (Experimental)
-=====================
+OV5640 for Armbian H3 (Experimental)
+====================================
 
 This is my modified OV5640 driver for the CMOS camera that incorporates many image resolutions and/or image quality.
 You can take advantage of a higher FPS, Image Quality (Preview or Capture) or Window size, choosing the one that best fit your needs.
@@ -29,4 +29,5 @@ frame_rate=0 (7.5 FPS), frame_rate=1 (15 FPS), frame_rate=2 (30 FPS) (default=0 
 
 History Log:
 * initial commit, preparing for the different boards and kernel version
+* Armbian kernel 3.4.102 - Compiling test only
 

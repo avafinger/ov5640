@@ -33,7 +33,7 @@ MODULE_LICENSE("GPL");
 #define AF_WIN_NEW_COORD
 
 //for internel driver debug
-#define DEV_DBG_EN      1
+#define DEV_DBG_EN      0
 #if(DEV_DBG_EN == 1)    
 #define vfe_dev_dbg(x,arg...) printk("[OV5640@lex]"x,##arg)
 #else

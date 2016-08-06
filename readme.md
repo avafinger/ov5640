@@ -21,7 +21,7 @@ Working window sizes and expected FPS (preview mode)
 
 Usage
 =====
-modprobe ov56405 frame_rate=2
+modprobe ov5640 frame_rate=2
 
 where:
 

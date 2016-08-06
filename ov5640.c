@@ -22,18 +22,18 @@
 static unsigned int frame_rate = 0;
 module_param(frame_rate, uint, 0);
 MODULE_PARM_DESC(frame_rate,
-"frame_rate=0 (7.5 FPS), frame_rate=1 (15 FPS), frame_rate=2 (30 FPS) (default=0 - 7.5 FPS)");
+"frame_rate=0 (default with no parameters), frame_rate=1 (7.5 FPS), frame_rate=2 (15 FPS), frame_rate=3 (30 FPS) (default=0 - or no parms - default settings)");
 
 MODULE_AUTHOR("raymonxiu");
 MODULE_AUTHOR("@lex");
 
-MODULE_DESCRIPTION("A low-level driver for ov5640 sensors");
+MODULE_DESCRIPTION("A low-level driver for ov5640 sensors (A64)");
 MODULE_LICENSE("GPL");
 
 #define AF_WIN_NEW_COORD
 
 //for internel driver debug
-#define DEV_DBG_EN      0
+#define DEV_DBG_EN      1
 #if(DEV_DBG_EN == 1)    
 #define vfe_dev_dbg(x,arg...) printk("[OV5640@lex]"x,##arg)
 #else
@@ -110,6 +110,7 @@ unsigned int cap_manual_gain=0x10;
 #endif
 
 enum ov5640_frame_rate {
+    ov5640_default_fps,
     ov5640_7_fps,
 	ov5640_15_fps,
 	ov5640_30_fps,
@@ -5689,6 +5690,132 @@ static struct sensor_win_size *sensor_win_size_frame_rate_ptr;
 
 static struct sensor_win_size sensor_win_sizes[ov5640_max_fps][N_WIN_SIZES] = {
     {
+        /* --------------- default FPS -------------- */
+        /* ****** NEED TO FIX ****** */
+        /* QSXGA: 2592x1936 */
+        {
+            .width      = QSXGA_WIDTH,
+            .height     = QSXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qsxga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qsxga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* QXGA: 2048x1536 */
+        {
+            .width      = QXGA_WIDTH,
+            .height     = QXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qxga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qxga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* 1080P: 1920x1080 */
+        {
+            .width      = HD1080_WIDTH,
+            .height     = HD1080_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_1080p_15FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_1080p_15FPS_regs),
+            .set_size   = NULL,
+        },
+        /* UXGA: 1600x1200 */
+        {
+            .width      = UXGA_WIDTH,
+            .height     = UXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_uxga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_uxga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* UXGA: 1280x960 */
+        {
+            .width      = SXGA_WIDTH,
+            .height     = SXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_sxga_15FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_sxga_15FPS_regs),
+            .set_size   = NULL,
+        },
+        /* 720P: 1280x720 */
+        {
+            .width      = HD720_WIDTH,
+            .height     = HD720_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_720p_15FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_720p_15FPS_regs),
+            .set_size   = NULL,
+        },
+        /* XGA: 1024x768 */
+        {
+            .width      = XGA_WIDTH,
+            .height     = XGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_xga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_xga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* SVGA: 800x600 */
+        {
+            .width      = SVGA_WIDTH,
+            .height     = SVGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_svga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_svga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* VGA: 640x480 */
+        {
+            .width      = VGA_WIDTH,
+            .height     = VGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_vga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_vga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* CIF: 352x288 */
+        /*
+        {
+            .width      = CIF_WIDTH,
+            .height     = CIF_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_cif_regs,
+            .regs_size  = ARRAY_SIZE(sensor_cif_regs),
+            .set_size   = NULL,
+        },
+        * */
+        /* QVGA: 320x240 */
+        {
+            .width      = QVGA_WIDTH,
+            .height     = QVGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qvga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qvga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* QCIF: 176x144 */
+        {
+            .width      = QCIF_WIDTH,
+            .height     = QCIF_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qcif_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qcif_30FPS_regs),
+            .set_size   = NULL,
+        },
+    },
+    {
         /* --------------- 7.5 FPS -------------- */
         /* QSXGA: 2592x1936 */
         {
@@ -6929,9 +7056,9 @@ MODULE_DEVICE_TABLE(i2c, sensor_id);
 
 static struct i2c_driver sensor_driver = {
     .driver = {
-               .owner = THIS_MODULE,
-               .name = SENSOR_NAME,
-               },
+        .owner = THIS_MODULE,
+        .name = SENSOR_NAME,
+    },
     .probe = sensor_probe,
     .remove = sensor_remove,
     .id_table = sensor_id,
@@ -6951,7 +7078,7 @@ static __init int init_sensor(void)
     MCLK_DIV = 1;
 #endif
     if (frame_rate >= ov5640_max_fps)
-        frame_rate = ov5640_7_fps;
+        frame_rate = ov5640_default_fps;
     sensor_win_size_frame_rate_ptr = &sensor_win_sizes[frame_rate][0];
     vfe_dev_dbg("init_sensor - frame_rate: %u, max_win_size: %d\n", frame_rate, N_WIN_SIZES);
     return cci_dev_init_helper(&sensor_driver);

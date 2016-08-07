@@ -1,10 +1,10 @@
-OV5640 for Armbian H3 (Experimental)
-====================================
+OV5640 for Nano Pi M2/M3 - Samsung S5P4418 / S5P6818 (Experimental)
+===================================================================
 
 This is my modified OV5640 driver for the CMOS camera that incorporates many image resolutions and/or image quality.
 You can take advantage of a higher FPS, Image Quality (Preview or Capture) or Window size, choosing the one that best fit your needs.
 
-This is expected to work with reasonable quality for some architectures like AW (H3 / A20)
+This is expected to work with reasonable quality for S5P4418 / S5P6818
 
 Working window sizes and expected FPS (preview mode)
 - QSXGA: 2592x1936 (7.5 FPS)
@@ -28,6 +28,6 @@ where:
 frame_rate=0 (default with no parameters), frame_rate=1 (7.5 FPS), frame_rate=2 (15 FPS), frame_rate=3 (30 FPS) (default=0 - or no parms - default settings)
 
 History Log:
-* initial commit, preparing for the different boards and kernel version
-* Armbian kernel 3.4.102 - Compiling test only
+* initial commit, preparing the code for initial starting point.
+
 

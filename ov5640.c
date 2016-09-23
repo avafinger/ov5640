@@ -179,6 +179,7 @@ static inline struct sensor_info *to_state(struct v4l2_subdev *sd)
 
 
 /*
+ * 
  * The default register settings
  *
  */
@@ -808,7 +809,7 @@ static struct regval_list sensor_qxga_15FPS_regs[] = {
  */
 
 // 1080P 1920x1080
-//for video 120 FPS (actually 30FPS)
+//for video 120 FPS (actually 30FPS for testing)
 static struct regval_list sensor_1080p_120FPS_regs[] = {
     //1080: 1920*1080 
     //power down
@@ -863,12 +864,34 @@ static struct regval_list sensor_1080p_120FPS_regs[] = {
     {0x460c, 0x22},
     
     {0x5001, 0x83},
-    
+
+    {0x3034, 0x18},
+	{0x3035, 0x11},
+	{0x3036, 0x54},
+	{0x3037, 0x13},
+	{0x3108, 0x01},
+
+    {0x3824, 0x04},
+    {REG_DLY, 0x05},            //delay 5ms
+
+#if 0    
     {0x3034, 0x1a},
 	{0x3035, 0x21},
 	{0x3036, 0x69},
 	{0x3037, 0x13},
 	{0x3108, 0x01},
+#endif    
+
+#if 0
+    {0x3034, 0x18},             //
+    {0x3035, 0x21},             //0x11:60fps 0x21:30fps 0x41:15fps
+    {0x3036, 0x46},             //0x46->30fps
+    {0x3037, 0x13},             //////div
+    {0x3108, 0x01},             //
+    
+    {0x3824, 0x01},             //
+#endif    
+    
     /*
     {0x3034, 0x1a},
     {0x3035, 0x11},
@@ -980,7 +1003,19 @@ static struct regval_list sensor_1080p_60FPS_regs[] = {
     {0x460c, 0x22},
     
     {0x5001, 0x83},
+
+    {0x3034, 0x1a},
+    {0x3035, 0x11},             //30fps
+    {0x3036, 0x46},
+    {0x3037, 0x13},
+    {0x3108, 0x01},
+
+    {0x3824, 0x04},
+    {REG_DLY, 0x05},            //delay 5ms
+
     
+
+#if 0    
     {0x3034, 0x1a},
 	{0x3035, 0x21},
 	{0x3036, 0x69},
@@ -995,6 +1030,7 @@ static struct regval_list sensor_1080p_60FPS_regs[] = {
     // {0x3824, 0x02},
     {0x3824, 0x01},
     {REG_DLY, 0x05},            //delay 5ms
+#endif    
     
     {0x3c07, 0x07},
     {0x3c08, 0x00},
@@ -1198,10 +1234,25 @@ static struct regval_list sensor_1080p_15FPS_regs[] = {
     {0x3814, 0x11},
     {0x3815, 0x11},
 
-    {0x3034, 0x1a},
+    {0x3034, 0x18}, // 0x1a
     {0x3035, 0x21},             //15fps
     {0x3036, 0x46},
     {0x3037, 0x13},
+    {0x3108, 0x01},
+
+    {0x3824, 0x04},
+    {REG_DLY, 0x05},            //delay 5ms
+
+#if 0
+    {0x3034, 0x18},
+    {0x3035, 0x21},
+    {0x3036, 0x54},
+    {0x3037, 0x13},
+    {0x3108, 0x01},
+
+    {0x3824, 0x04},
+    {REG_DLY, 0x05},            //delay 5ms
+#endif    
 
     {0x380c, 0x09},
     {0x380d, 0xc4},
@@ -1229,8 +1280,8 @@ static struct regval_list sensor_1080p_15FPS_regs[] = {
     {0x4004, 0x06},
     {0x3002, 0x1c},
     {0x3006, 0xc3},
-    {0x3824, 0x04},
-    {REG_DLY, 0x05},            //delay 5ms
+    // {0x3824, 0x04},
+    // {REG_DLY, 0x05},            //delay 5ms
     {0x5001, 0x83},
 
     {0x4713, 0x02},
@@ -1294,6 +1345,10 @@ static struct regval_list sensor_1080p_7FPS_regs[] = {
     {0x3037, 0x13},
     {0x3108, 0x01},
 
+    {0x3824, 0x04},
+    /* {0x3824, 0x04}, */
+    {REG_DLY, 0x05},            //delay 5ms
+
     {0x380c, 0x09},
     {0x380d, 0xc4},
     {0x380e, 0x04},
@@ -1320,8 +1375,8 @@ static struct regval_list sensor_1080p_7FPS_regs[] = {
     {0x4004, 0x06},
     {0x3002, 0x1c},
     {0x3006, 0xc3},
-    {0x3824, 0x04},
-    {REG_DLY, 0x05},            //delay 5ms
+    /* {0x3824, 0x04}, */
+    // {REG_DLY, 0x05},            //delay 5ms
     {0x5001, 0x83},
 
     {0x4713, 0x02},
@@ -3081,10 +3136,6 @@ static struct regval_list sensor_qcif_7FPS_regs[] = {
     //  power down release
     {0x3008, 0x02},     
 };
-
-
-
-
 
 #ifdef AUTO_FPS	
 //auto framerate mode

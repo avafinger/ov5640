@@ -30,4 +30,4 @@ frame_rate=0 (default with no parameters), frame_rate=1 (7.5 FPS), frame_rate=2 
 History Log:
 * initial commit, preparing for the different boards and kernel version
 * Armbian kernel 3.4.102 - Compiling test only
-
+* Armbian kernel 3.4.112 - Fixed HFLip on some window sizes

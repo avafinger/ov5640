@@ -4277,6 +4277,11 @@ static struct regval_list sensor_fmt_yuv422_uyvy[] = {
   //{REG_TERM,VAL_TERM},
 };
 
+static struct regval_list sensor_fmt_rgb_bgr24[] = {  
+    {0x4300,0x22},  //BGR 
+};
+
+
 //static struct regval_list sensor_fmt_raw[] = {
 //  
 //};
@@ -6102,6 +6107,14 @@ static struct sensor_format_struct {
     .regs_size = ARRAY_SIZE(sensor_fmt_yuv422_vyuy),
     .bpp    = 2,
   },
+    {
+         .desc      = "RGB888",
+         .mbus_code = V4L2_MBUS_FMT_RGB888_24X1, // V4L2_MBUS_FMT_RGB444_2X8_PADHI_BE,
+         .regs      = sensor_fmt_rgb_bgr24,
+         .regs_size = ARRAY_SIZE(sensor_fmt_rgb_bgr24),
+         .bpp       = 1,
+    }
+
 //  {
 //    .desc   = "Raw RGB Bayer",
 //    .mbus_code  = V4L2_MBUS_FMT_SBGGR8_1X8,
@@ -6749,6 +6762,131 @@ static struct sensor_win_size sensor_win_sizes[ov5640_max_fps][N_WIN_SIZES] = {
         },
     },
     /* --------------- 90 FPS Dreaming (just for testing differnet timings)----------- */
+    {
+        /* QSXGA: 2592x1936 */
+        {
+            .width      = QSXGA_WIDTH,
+            .height     = QSXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qsxga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qsxga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* QXGA: 2048x1536 */
+        {
+            .width      = QXGA_WIDTH,
+            .height     = QXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qxga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qxga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* 1080P: 1920x1080 */
+        {
+            .width      = HD1080_WIDTH,
+            .height     = HD1080_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_1080p_60FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_1080p_60FPS_regs),
+            .set_size   = NULL,
+        },
+        /* UXGA: 1600x1200 */
+        {
+            .width      = UXGA_WIDTH,
+            .height     = UXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_uxga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_uxga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* UXGA: 1280x960 */
+        {
+            .width      = SXGA_WIDTH,
+            .height     = SXGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_sxga_15FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_sxga_15FPS_regs),
+            .set_size   = NULL,
+        },
+        /* 720P: 1280x720 */
+        {
+            .width      = HD720_WIDTH,
+            .height     = HD720_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_720p_15FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_720p_15FPS_regs),
+            .set_size   = NULL,
+        },
+        /* XGA: 1024x768 */
+        {
+            .width      = XGA_WIDTH,
+            .height     = XGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_xga_7FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_xga_7FPS_regs),
+            .set_size   = NULL,
+        },
+        /* SVGA: 800x600 */
+        {
+            .width      = SVGA_WIDTH,
+            .height     = SVGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_svga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_svga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* VGA: 640x480 */
+        {
+            .width      = VGA_WIDTH,
+            .height     = VGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_vga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_vga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* CIF: 352x288 */
+        /*
+        {
+            .width      = CIF_WIDTH,
+            .height     = CIF_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_cif_regs,
+            .regs_size  = ARRAY_SIZE(sensor_cif_regs),
+            .set_size   = NULL,
+        },
+        * */
+        /* QVGA: 320x240 */
+        {
+            .width      = QVGA_WIDTH,
+            .height     = QVGA_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qvga_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qvga_30FPS_regs),
+            .set_size   = NULL,
+        },
+        /* QCIF: 176x144 */
+        {
+            .width      = QCIF_WIDTH,
+            .height     = QCIF_HEIGHT,
+            .hoffset    = 0,
+            .voffset    = 0,
+            .regs       = sensor_qcif_30FPS_regs,
+            .regs_size  = ARRAY_SIZE(sensor_qcif_30FPS_regs),
+            .set_size   = NULL,
+        },
+    },
+    /* --------------- 120 FPS Dreaming (just for testing differnet timings)----------- */
     {
         /* QSXGA: 2592x1936 */
         {

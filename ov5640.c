@@ -650,6 +650,9 @@ static struct regval_list sensor_qxga_7FPS_regs[] = {
     //capture 3Mega 7.5fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting
     {0x3034, 0x18},
@@ -728,6 +731,9 @@ static struct regval_list sensor_qxga_15FPS_regs[] = {
     //preview 3Mega 15fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting
     {0x3034, 0x1a},
@@ -1399,6 +1405,9 @@ static struct regval_list sensor_uxga_7FPS_regs[] = {
     //capture 2Mega 7.5fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting                                                                                                                        
     {0x3034, 0x18},
@@ -1479,6 +1488,9 @@ static struct regval_list sensor_uxga_15FPS_regs[] = {
     //capture 2Mega ~15fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting                                                                                                                        
     {0x3034, 0x18},
@@ -1558,6 +1570,9 @@ static struct regval_list sensor_uxga_30FPS_regs[] = {
     //capture 2Mega ~30fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting                                                                                                                        
     {0x3034, 0x18},
@@ -1892,6 +1907,9 @@ static struct regval_list sensor_xga_7FPS_regs[] = {
     //capture 1Mega 7.5fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting
     {0x3034, 0x18},
@@ -1972,6 +1990,9 @@ static struct regval_list sensor_xga_15FPS_regs[] = {
     //capture 1Mega ~15fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting                                                                                   
     {0x3034, 0x18},
@@ -2052,6 +2073,9 @@ static struct regval_list sensor_xga_30FPS_regs[] = {
     //capture 1Mega 7.5fps
     //power down
     {0x3008,0x42},
+
+    {0x3820, 0x40},
+    {0x3821, 0x06},
     
     //pll and clock setting
     {0x3034, 0x18},
@@ -2384,6 +2408,9 @@ static struct regval_list sensor_svga_30FPS_regs[] = {
     // ~30 FPS
     //power down
     {0x3008, 0x42},
+
+    {0x3820, 0x41},
+    {0x3821, 0x07},
     
     // pll and clock setting
     {0x3034, 0x1a},
@@ -2461,6 +2488,9 @@ static struct regval_list sensor_svga_15FPS_regs[] = {
     // ~15 FPS
     //power down
     {0x3008, 0x42},
+
+    {0x3820, 0x41},
+    {0x3821, 0x07},
     
     // pll and clock setting
     {0x3034, 0x1a},
@@ -2538,6 +2568,9 @@ static struct regval_list sensor_svga_7FPS_regs[] = {
     // ~15 FPS
     //power down
     {0x3008, 0x42},
+
+    {0x3820, 0x41},
+    {0x3821, 0x07},
     
     // pll and clock setting
     {0x3034, 0x1a},
@@ -2705,6 +2738,9 @@ static struct regval_list sensor_vga_60FPS_regs[] = {
     //power down
     {0x3008, 0x42},
 
+    {0x3820, 0x41},
+    {0x3821, 0x07},
+
     {0x3503, 0x00},             //AEC enable
     {0x3814, 0x71},
     {0x3815, 0x35},
@@ -2738,7 +2774,6 @@ static struct regval_list sensor_vga_60FPS_regs[] = {
     
     {0x3824, 0x02},
     {REG_DLY, 0x05},            //delay 50ms 
-
     
     {0x3a02, 0x01},
     {0x3a03, 0xf0},

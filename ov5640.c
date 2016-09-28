@@ -4313,7 +4313,7 @@ static struct regval_list sensor_fmt_yuv422_uyvy[] = {
 };
 
 static struct regval_list sensor_fmt_rgb_bgr24[] = {  
-    {0x4300,0x22},  //BGR 
+    {0x4300,0x23},  //BGR ?? this needs ISP working and possibly a Raw Bayer sensor and a fix in vfe.c
 };
 
 

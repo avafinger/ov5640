@@ -4429,6 +4429,9 @@ unsigned char ogain,oexposurelow,oexposuremid,oexposurehigh;
 unsigned int preview_exp_line,preview_fps;
 unsigned long preview_pclk;
 
+unsigned int pv_fps;
+unsigned long pv_pclk;
+
 static unsigned int cal_cap_gain(unsigned char prv_gain, unsigned char lum)
 {
   unsigned int gain_ret=0x18;
@@ -4761,6 +4764,90 @@ static int sensor_get_fps(struct v4l2_subdev *sd)
   
   return 0;
 }
+
+static int sensor_read_pclk(struct v4l2_subdev *sd)
+{
+    unsigned long pclk;
+    data_type pre_div, mul, sys_div, pll_rdiv, bit_div, sclk_rdiv;
+
+    sensor_read(sd, 0x3037, &pre_div);
+    pre_div = pre_div & 0x0f;
+
+    if (pre_div == 0)
+        pre_div = 1;
+
+    sensor_read(sd, 0x3036, &mul);
+    if (mul >= 128)
+        mul = mul / 2 * 2;
+
+    sensor_read(sd, 0x3035, &sys_div);
+    sys_div = (sys_div & 0xf0) >> 4;
+
+    sensor_read(sd, 0x3037, &pll_rdiv);
+    pll_rdiv = (pll_rdiv & 0x10) >> 4;
+    pll_rdiv = pll_rdiv + 1;
+
+    sensor_read(sd, 0x3034, &bit_div);
+    bit_div = (bit_div & 0x0f);
+
+    sensor_read(sd, 0x3108, &sclk_rdiv);
+    sclk_rdiv = (sclk_rdiv & 0x03);
+    sclk_rdiv = sclk_rdiv << sclk_rdiv;
+
+    vfe_dev_dbg("** pre_div = %d,mul = %d,sys_div = %d,pll_rdiv = %d,sclk_rdiv = %d\n", pre_div, mul, sys_div, pll_rdiv, sclk_rdiv);
+
+    if ((pre_div && sys_div && pll_rdiv && sclk_rdiv) == 0)
+        return -EFAULT;
+
+    if (bit_div == 8)
+        pclk = MCLK / MCLK_DIV / pre_div * mul / sys_div / pll_rdiv / 2 / sclk_rdiv;
+    else if (bit_div == 10)
+        pclk = MCLK / MCLK_DIV / pre_div * mul / sys_div / pll_rdiv * 2 / 5 / sclk_rdiv;
+    else
+        pclk = MCLK / MCLK_DIV / pre_div * mul / sys_div / pll_rdiv / 1 / sclk_rdiv;
+
+    vfe_dev_dbg("read pclk = %ld\n", pclk);
+
+    pv_pclk = pclk;
+    return 0;
+}
+
+
+static int sensor_print_fps(struct v4l2_subdev *sd)
+{
+    data_type vts_low, vts_high, hts_low, hts_high, vts_extra_high, vts_extra_low;
+    unsigned long vts, hts, vts_extra;
+#if(DEV_DBG_EN == 1)    
+    unsigned long ulres;
+#endif    
+
+    sensor_read(sd, 0x380c, &hts_high);
+    sensor_read(sd, 0x380d, &hts_low);
+    sensor_read(sd, 0x380e, &vts_high);
+    sensor_read(sd, 0x380f, &vts_low);
+    sensor_read(sd, 0x350c, &vts_extra_high);
+    sensor_read(sd, 0x350d, &vts_extra_low);
+
+    hts = hts_high * 256 + hts_low;
+    vts = vts_high * 256 + vts_low;
+    vts_extra = vts_extra_high * 256 + vts_extra_low;
+
+    if ((hts && (vts + vts_extra)) == 0)
+        return -EFAULT;
+
+    if (sensor_read_pclk(sd))
+        vfe_dev_err("read pclk error!\n");
+
+    pv_fps = ulres = pv_pclk / ((vts_extra + vts) * hts);
+
+#if(DEV_DBG_EN == 1)
+    vfe_dev_print("pv_fps(%d) = pv_pclk(%lu) / ((vts_extra(%lu) + vts(%lu)) * hts(%lu))\n", pv_fps,pv_pclk,vts_extra,vts,hts);
+    vfe_dev_dbg("pv fps = %d - ulres = %lu\n", pv_fps, ulres);
+#endif
+
+    return 0;
+}
+
 
 static int sensor_get_preview_exposure(struct v4l2_subdev *sd)
 {
@@ -5335,9 +5422,12 @@ static int sensor_g_hflip(struct v4l2_subdev *sd, __s32 *value)
   
   rdval &= (1<<1);
   rdval >>= 1;
+
+#if(DEV_DBG_EN == 1)
+    vfe_dev_print("sensor_g_hflip  = %d\n", rdval);
+#endif
     
   *value = rdval;
-
   info->hflip = *value;
   return 0;
 }
@@ -5366,6 +5456,11 @@ static int sensor_s_hflip(struct v4l2_subdev *sd, int value)
   LOG_ERR_RET(sensor_write(sd, 0x3821, rdval))
   
   usleep_range(10000,12000);
+  
+#if(DEV_DBG_EN == 1)
+    vfe_dev_print("sensor_s_hflip  = %d\n", value);
+#endif
+  
   info->hflip = value;
   return 0;
 }
@@ -5382,6 +5477,11 @@ static int sensor_g_vflip(struct v4l2_subdev *sd, __s32 *value)
   rdval >>= 1;
   
   info->vflip = *value;
+
+#if(DEV_DBG_EN == 1)
+    vfe_dev_print("sensor_g_vflip  = %d\n", *value);
+#endif
+  
   return 0;
 }
 
@@ -5410,6 +5510,11 @@ static int sensor_s_vflip(struct v4l2_subdev *sd, int value)
   
   usleep_range(10000,12000);
   info->vflip = value;
+
+#if(DEV_DBG_EN == 1)
+    vfe_dev_print("sensor_s_vflip  = %d\n", value);
+#endif
+  
   return 0;
 }
 
@@ -7243,6 +7348,23 @@ static int sensor_s_fmt(struct v4l2_subdev *sd,
   struct sensor_info *info = to_state(sd);
   
   vfe_dev_dbg("sensor_s_fmt\n");
+
+#if(DEV_DBG_EN == 1)
+    if (info->capture_mode == V4L2_MODE_VIDEO) {
+        vfe_dev_dbg("capture_mode: V4L2_MODE_VIDEO\n");
+    } else {
+        if (info->capture_mode == V4L2_MODE_IMAGE) {
+            vfe_dev_dbg("capture_mode: V4L2_MODE_IMAGE\n");
+        } else {
+            if (info->capture_mode == V4L2_MODE_PREVIEW) {
+                vfe_dev_dbg("capture_mode: V4L2_MODE_PREVIEW\n");
+            } else {
+                // vfe_dev_dbg("capture_mode: V4L2_MODE_???\n");
+                vfe_dev_print("capture_mode: %d - V4L2_MODE_???\n", info->capture_mode);
+            }
+        }
+    }
+#endif
   
   sensor_write_array(sd, sensor_oe_disable_regs ,ARRAY_SIZE(sensor_oe_disable_regs));
   
@@ -7436,9 +7558,12 @@ static int sensor_s_fmt(struct v4l2_subdev *sd,
   info->fmt = sensor_fmt;
   info->width = wsize->width;
   info->height = wsize->height;
-  
-  vfe_dev_print("s_fmt set width = %d, height = %d\n",wsize->width,wsize->height);
+
+#if(DEV_DBG_EN == 1)  
+    vfe_dev_print("s_fmt set width = %d, height = %d\n",wsize->width,wsize->height);
     sensor_get_fps(sd);
+#endif
+    
 	sensor_write_array(sd, sensor_oe_enable_regs, ARRAY_SIZE(sensor_oe_enable_regs));
 	
 	return 0;
@@ -7473,7 +7598,7 @@ static int sensor_s_parm(struct v4l2_subdev *sd, struct v4l2_streamparm *parms)
   struct sensor_info *info = to_state(sd);
   unsigned char div;
   
-  vfe_dev_dbg("sensor_s_parm\n");
+  vfe_dev_dbg("sensor_s_parm: numerator/denominator = %d/%d\n", tpf->numerator, tpf->denominator);
   
   if (parms->type != V4L2_BUF_TYPE_VIDEO_CAPTURE){
   	vfe_dev_dbg("parms->type!=V4L2_BUF_TYPE_VIDEO_CAPTURE\n");
@@ -7486,6 +7611,22 @@ static int sensor_s_parm(struct v4l2_subdev *sd, struct v4l2_streamparm *parms)
   }
     
   info->capture_mode = cp->capturemode;
+
+#if (DEV_DBG_EN == 1)
+    if (info->capture_mode == V4L2_MODE_VIDEO) {
+        vfe_dev_dbg("capture_mode: V4L2_MODE_VIDEO\n");
+    } else {
+        if (info->capture_mode == V4L2_MODE_IMAGE) {
+            vfe_dev_dbg("capture_mode: V4L2_MODE_IMAGE\n");
+        } else {
+            if (info->capture_mode == V4L2_MODE_PREVIEW) {
+                vfe_dev_dbg("capture_mode: V4L2_MODE_PREVIEW\n");
+            } else {
+                vfe_dev_dbg("capture_mode: V4L2_MODE_???\n");
+            }
+        }
+    }
+#endif
   
   if (info->capture_mode == V4L2_MODE_IMAGE) {
     vfe_dev_dbg("capture mode is not video mode,can not set frame rate!\n");
@@ -7580,12 +7721,18 @@ static int sensor_queryctrl(struct v4l2_subdev *sd,
   case V4L2_CID_AUTO_FOCUS_WIN_NUM:
     return v4l2_ctrl_query_fill(qc, 0, 1, 1, 0);
   }
+#if (DEV_DBG_EN == 1)    
+    vfe_dev_dbg("sensor_queryctrl: %d *** EINVAL ***\n",qc->id);
+#endif    
+
   return -EINVAL;
 }
 
 static int sensor_g_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
 {
-  //vfe_dev_dbg("sensor_g_ctrl ctrl->id=0x%8x\n", ctrl->id);
+#if (DEV_DBG_EN == 1)        
+  vfe_dev_dbg("sensor_g_ctrl ctrl->id=0x%8x\n", ctrl->id);
+#endif  
   switch (ctrl->id) {
   case V4L2_CID_BRIGHTNESS:
     return sensor_g_brightness(sd, &ctrl->value);
@@ -7645,8 +7792,11 @@ static int sensor_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
 {
   struct v4l2_queryctrl qc;
   int ret;
-  
-//  vfe_dev_dbg("sensor_s_ctrl ctrl->id=0x%8x\n", ctrl->id);
+
+#if (DEV_DBG_EN == 1)  
+  vfe_dev_dbg("sensor_s_ctrl id: %d - value: %d\n",ctrl->id, (int)ctrl->value);
+#endif
+
   qc.id = ctrl->id;
   ret = sensor_queryctrl(sd, &qc);
   if (ret < 0) {
@@ -7720,7 +7870,11 @@ static int sensor_s_ctrl(struct v4l2_subdev *sd, struct v4l2_control *ctrl)
 	  	return sensor_s_af_zone(sd, (struct v4l2_win_coordinate *)(ctrl->user_pt));
 	  case V4L2_CID_AUTO_EXPOSURE_WIN_NUM:
 	  	return 0;
+    default:
+        vfe_dev_dbg("sensor_s_ctrl *** EINVAL\n");
+        return -EINVAL;
   }
+  vfe_dev_dbg("sensor_s_ctrl *** EINVAL\n");
   return -EINVAL;
 }
 

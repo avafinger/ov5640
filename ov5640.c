@@ -7564,13 +7564,12 @@ static int sensor_s_fmt(struct v4l2_subdev *sd,
   info->width = wsize->width;
   info->height = wsize->height;
 
-#if(DEV_DBG_EN == 1)  
+#if(DEV_DBG_EN == 1)
     vfe_dev_print("s_fmt set width = %d, height = %d\n",wsize->width,wsize->height);
     sensor_get_fps(sd);
 #endif
     
 	sensor_write_array(sd, sensor_oe_enable_regs, ARRAY_SIZE(sensor_oe_enable_regs));
-	
 	return 0;
 }
 

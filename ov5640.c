@@ -4820,7 +4820,7 @@ static int sensor_read_pclk(struct v4l2_subdev *sd)
 
 static int sensor_print_fps(struct v4l2_subdev *sd)
 {
-    data_type vts_low, vts_high, hts_low, hts_high, vts_extra_high, vts_extra_low;
+    unsigned char vts_low, vts_high, hts_low, hts_high, vts_extra_high, vts_extra_low;
     unsigned long vts, hts, vts_extra;
 #if(DEV_DBG_EN == 1)    
     unsigned long ulres;

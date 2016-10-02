@@ -517,7 +517,7 @@ static struct regval_list sensor_qsxga_7FPS_regs[] = {
     {0x3a0e, 0x0d},             //50HZ step max                 
     {0x3a0d, 0x10},             //60HZ step max                 
 
-    {0x3503, 0x07},             //AEC disable                                                                                             
+    // {0x3503, 0x07},             //AEC disable                                                                                             
     {0x350c, 0x00},
     {0x350d, 0x00},
     {0x3c07, 0x07},             //light meter 1 thereshold                                 
@@ -600,7 +600,7 @@ static struct regval_list sensor_qsxga_15FPS_regs[] = {
     {0x3a0e, 0x0d},             //50HZ step max                 
     {0x3a0d, 0x10},             //60HZ step max                 
 
-    {0x3503, 0x07},             //AEC disable                                                                                             
+    // {0x3503, 0x07},             //AEC disable                                                                                             
     {0x350c, 0x00},
     {0x350d, 0x00},
     {0x3c07, 0x07},             //light meter 1 thereshold                                 
@@ -764,7 +764,7 @@ static struct regval_list sensor_qxga_15FPS_regs[] = {
     {0x3a0e, 0x0d},             //50HZ step max                 
     {0x3a0d, 0x10},             //60HZ step max                 
 
-    {0x3503,0x07}, //AEC disable                                             
+    // {0x3503,0x07}, //AEC disable                                             
     {0x350c, 0x00},
     {0x350d, 0x00},
     {0x3c07, 0x07},             //light meter 1 thereshold   

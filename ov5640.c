@@ -30,7 +30,7 @@ MODULE_LICENSE("GPL");
 
 #define AF_WIN_NEW_COORD
 //for internel driver debug
-#define DEV_DBG_EN      0
+#define DEV_DBG_EN      1   // 1 - Debugging / 0 - Release
 #if(DEV_DBG_EN == 1)    
 #define vfe_dev_dbg(x,arg...) printk("[OV5640@lex]"x,##arg)
 #else
@@ -4429,8 +4429,10 @@ unsigned char ogain,oexposurelow,oexposuremid,oexposurehigh;
 unsigned int preview_exp_line,preview_fps;
 unsigned long preview_pclk;
 
+#if(DEV_DBG_EN == 1)
 unsigned int pv_fps;
 unsigned long pv_pclk;
+#endif
 
 static unsigned int cal_cap_gain(unsigned char prv_gain, unsigned char lum)
 {
@@ -4689,6 +4691,8 @@ static int sensor_set_capture_exposure(struct v4l2_subdev *sd)
 //sensor_write(sd,0x5588 ,0x09);
 	return 0;
 }
+
+
 static int sensor_get_pclk(struct v4l2_subdev *sd)
 {
   unsigned long pclk;
@@ -4765,10 +4769,11 @@ static int sensor_get_fps(struct v4l2_subdev *sd)
   return 0;
 }
 
+#if(DEV_DBG_EN == 1)
 static int sensor_read_pclk(struct v4l2_subdev *sd)
 {
     unsigned long pclk;
-    data_type pre_div, mul, sys_div, pll_rdiv, bit_div, sclk_rdiv;
+    unsigned char  pre_div, mul, sys_div, pll_rdiv, bit_div, sclk_rdiv;
 
     sensor_read(sd, 0x3037, &pre_div);
     pre_div = pre_div & 0x0f;
@@ -4847,7 +4852,7 @@ static int sensor_print_fps(struct v4l2_subdev *sd)
 
     return 0;
 }
-
+#endif
 
 static int sensor_get_preview_exposure(struct v4l2_subdev *sd)
 {

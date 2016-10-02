@@ -27,7 +27,7 @@ MODULE_PARM_DESC(frame_rate,
 MODULE_AUTHOR("raymonxiu");
 MODULE_AUTHOR("@lex");
 
-MODULE_DESCRIPTION("A low-level driver for ov5640 sensors");
+MODULE_DESCRIPTION("A low-level driver for ov5640 sensors A64");
 MODULE_LICENSE("GPL");
 
 #define AF_WIN_NEW_COORD

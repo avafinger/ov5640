@@ -31,11 +31,13 @@ Platform:
 
 * (A64) BananaPi M64 / Pine64+ use: git clone -b A64 https://github.com/avafinger/ov5640
 * (H3) OrangePi / BananaPi / NanoPi use: git clone -b Armbian_H3 https://github.com/avafinger/ov5640
+* (A83T) BananaPi M3 will be ready soon
 
 Application to grab frammes - v4l2 / OpenCV
 ===========================================
 
 	git clone https://github.com/avafinger/cap-v4l2
+	cd cap-v4l2
 	sudo ./install_deps.sh
 	./build_script.sh
 	./cap 1280 720 4 1 -999 -1 -1 (output will be frame_1280x720.jpg)
@@ -44,9 +46,10 @@ Important
 =========
 
 You need to load the correct driver (this latest ov5640) and make sure /dev/video0 is created.
+Check if you have all dependencies.
 
 History:
 ========
 
 * ov5640 initial commit
-* pass stability test
+* pass stability test (./test_ov5640;sh)

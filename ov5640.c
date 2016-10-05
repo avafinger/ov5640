@@ -4817,14 +4817,11 @@ static int sensor_read_pclk(struct v4l2_subdev *sd)
     return 0;
 }
 
-
 static int sensor_print_fps(struct v4l2_subdev *sd)
 {
     unsigned char vts_low, vts_high, hts_low, hts_high, vts_extra_high, vts_extra_low;
     unsigned long vts, hts, vts_extra;
-#if(DEV_DBG_EN == 1)    
     unsigned long ulres;
-#endif    
 
     sensor_read(sd, 0x380c, &hts_high);
     sensor_read(sd, 0x380d, &hts_low);
@@ -4845,10 +4842,8 @@ static int sensor_print_fps(struct v4l2_subdev *sd)
 
     pv_fps = ulres = pv_pclk / ((vts_extra + vts) * hts);
 
-#if(DEV_DBG_EN == 1)
     vfe_dev_print("pv_fps(%d) = pv_pclk(%lu) / ((vts_extra(%lu) + vts(%lu)) * hts(%lu))\n", pv_fps,pv_pclk,vts_extra,vts,hts);
     vfe_dev_dbg("pv fps = %d - ulres = %lu\n", pv_fps, ulres);
-#endif
 
     return 0;
 }

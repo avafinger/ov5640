@@ -1,7 +1,7 @@
 This is my modified OV5640 driver for the CMOS camera that incorporates many image resolutions and/or image quality. 
 You can take advantage of a higher FPS, Image Quality (Preview or Capture) or Window size, choosing the one that best fit your needs.
 
-This is expected to work with reasonable quality for some architectures like AW (32 bit and 64 bit).
+This is expected to work with reasonable quality for AW platform (32 bit and 64 bit).
 
 Working window sizes and expected FPS (preview mode)
 
@@ -31,8 +31,8 @@ Platform:
 ========
 
 * (A64) BananaPi M64 / Pine64+ use: git clone -b A64 https://github.com/avafinger/ov5640
-* (H3) OrangePi / BananaPi / NanoPi use: git clone -b Armbian_H3 https://github.com/avafinger/ov5640
-* (A83T) BananaPi M3 will be ready soon
+* (H3) OrangePi / BananaPi / NanoPi (ARMBIAN) use: git clone -b Armbian_H3 https://github.com/avafinger/ov5640
+* (A83T) BananaPi M3 dual camera (linux-sunxi) use: git clone -b A83T https://github.com/avafinger/ov5640
 
 You can watch Armbian for the latest release / fix for this driver on H3 image.
 
@@ -41,6 +41,20 @@ Loading the OV5640 driver
 	sudo modprobe ov5640 (or with frame_rate=2 [0,1,2,3]
 	sudo modprobe vfe_v4l2
 
+OV5640 tested on the following devices
+======================================
+* OrangePi PC / One / 2E* (H3)
+* BananaPi M2P (H3) - Armbian (Ubuntu 14.04)
+* BananaPi M64 (Ubuntu Xenial LXDE Desktop 16.04 - longsleep's kernel)
+* Pine64+ (Ubuntu Xenial LXDE Desktop 16.04 - longsleep's kernel)
+* BananaPi M3 (dual camera OV5640 / OV8865) - linux-sunxi kernel
+
+Possibly will work with:
+* NanoPi M1 (with CAM500B, don't have one)
+* NanoPi Neo Air (with CAM500B, don't have one)
+* NanoPi A64 (it is just a guess, don't have one)
+* Orange Pi H5 (it is just a guess, don't have one)
+* BananaPi R40 (it is just a guess, don't have one)
 
 Application to grab frames - v4l2 / OpenCV
 ===========================================
@@ -61,10 +75,11 @@ Check if you have all dependencies.
 
 Special thanks (no specific order):
 ----------------------------------
-* Armbian (Igor / Thomas Kaiser / @mattday / @Gravelrash / @lvmc / @jules )- for the board (Xunlong) ,inspiration, information
+* Armbian (Igor / Thomas Kaiser / @mattday / @Gravelrash / @lvmc / @jules )- for the board (Xunlong) ,inspiration, information, POV
 * Nora Lee - Foxconn (for the boards and cameras)
 * Yuefei - FriendlyArm (for the boards and cameras)
-* linux-sunxi
+* linux-sunxi (kernel)
+* longsleep (kernel)
 
 History:
 ========
@@ -72,4 +87,5 @@ History:
 * ov5640 initial commit
 * pass stability test (./test_ov5640.sh)
 * Credits
+* A83T support
 

@@ -1,10 +1,10 @@
-OV5640 A64 - BananaPi / Pine64+ (Experimental)
-===============================================
+OV5640 A64 - BananaPi M64 / Pine64+ (Experimental)
+==================================================
 
 This is my modified OV5640 driver for the CMOS camera that incorporates many image resolutions and/or image quality.
-You can take advantage of a higher FPS, Image Quality (Preview or Capture) or Window size, choosing the one that best fit your needs.
+You can take advantage of a higher FPS (Video Mode), Image Quality (Preview or Capture) or Window size, choosing the one that best fit your needs.
 
-This is expected to work with reasonable quality for some architectures like AW (32 bit and 64 bit), nexell and possibly Actions. 
+This is expected to work with reasonable quality for most AW platform (32 bit and 64 bit)
 
 Working window sizes and expected FPS (preview mode)
 - QSXGA: 2592x1936 (7.5 FPS)
@@ -21,18 +21,37 @@ Working window sizes and expected FPS (preview mode)
 
 Usage
 =====
-modprobe ov56405 frame_rate=2
+modprobe ov5640 (or with parameters: frame_rate=1)
 
 where:
 
-frame_rate=0 (default with no parameters), frame_rate=1 (7.5 FPS), frame_rate=2 (15 FPS), frame_rate=3 (30 FPS) (default=0 - or no parms - default settings)
+frame_rate=0 (default with no parameters = no parameters = best FPS / quality), frame_rate=1 (7.5 FPS), frame_rate=2 (15 FPS), frame_rate=3 (30 FPS) (default=0 - or no parms - default settings)
 
 default frame rate tries to use the best FPS possible. If you want better quality use frame_rate=1
+
+Application to grab frames - v4l2 / OpenCV
+===========================================
+
+	git clone https://github.com/avafinger/cap-v4l2
+	cd cap-v4l2
+	sudo ./install_deps.sh
+	./build_script.sh
+	./cap 1920 1080 4 1 -999 -1 -1 (output will be frame_1920x1080.jpg)
+
+* you can also run a simple test ./test_ov5640.sh to grab all frames and display some FPS statistics
+
+Important
+=========
+
+You need to load the correct driver (this latest ov5640) and make sure /dev/video0 is created.
+Check if you have all dependencies.
+
 
 History Log:
 * initial commit, preparing for different boards and kernel versions
 * Added default values
-* Added output from testing
+* Added output from cap
+* A83T (dual camera)
 
 Output from testing cap app
 ===========================

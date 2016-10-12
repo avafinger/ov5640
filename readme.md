@@ -1,5 +1,5 @@
-OV5640 A64 - BananaPi M64 / Pine64+ (Experimental)
-==================================================
+OV5640 A83T - BananaPi M3 / Dual Camera (Experimental)
+======================================================
 
 This is my modified OV5640 driver for the CMOS camera that incorporates many image resolutions and/or image quality.
 You can take advantage of a higher FPS (Video Mode), Image Quality (Preview or Capture) or Window size, choosing the one that best fit your needs.
@@ -43,6 +43,7 @@ Application to grab frames - v4l2 / OpenCV
 Important
 =========
 
+You need to recompile the kernel with the new OV5640 driver and most important ** revert some BPI changes **
 You need to load the correct driver (this latest ov5640) and make sure /dev/video0 is created.
 Check if you have all dependencies.
 

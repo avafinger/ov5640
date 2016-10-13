@@ -25,12 +25,13 @@ MODULE_PARM_DESC(frame_rate,
 MODULE_AUTHOR("raymonxiu");
 MODULE_AUTHOR("@lex");
 
-MODULE_DESCRIPTION("A low-level driver for ov5640 sensors (A83T / H3 / A20)");
+MODULE_DESCRIPTION("A low-level driver for ov5640 sensors (H3)");
 MODULE_LICENSE("GPL");
 
 #define AF_WIN_NEW_COORD
 //for internel driver debug
 #define DEV_DBG_EN      0
+// #define OV5640_REG_SYS	1
 #if(DEV_DBG_EN == 1)    
 #define vfe_dev_dbg(x,arg...) printk("[OV5640@lex]"x,##arg)
 #else
@@ -6037,7 +6038,7 @@ static int sensor_power(struct v4l2_subdev *sd, int on)
       vfe_set_pmu_channel(sd,IOVDD,OFF);  
       //standby and reset io
       usleep_range(10000,12000);
-      vfe_gpio_write(sd,POWER_EN,CSI_STBY_OFF); // vfe_gpio_write(sd,PWDN,CSI_STBY_ON);
+      vfe_gpio_write(sd,POWER_EN,CSI_STBY_OFF);
       vfe_gpio_write(sd,RESET,CSI_RST_ON);
       //set the io to hi-z
       vfe_gpio_set_status(sd,RESET,0);//set the gpio to input
@@ -6175,6 +6176,10 @@ static int sensor_init(struct v4l2_subdev *sd, u32 val)
     io_set_flash_ctrl(sd, SW_CTRL_FLASH_OFF, info->fl_dev_info);
   }
   #endif
+
+  sensor_s_init_af(sd);
+  info->capture_mode = V4L2_MODE_PREVIEW;
+  info->auto_focus=0;
   return 0;
 }
 
@@ -7511,28 +7516,28 @@ static int sensor_s_fmt(struct v4l2_subdev *sd,
 			}		
 		}
 		
-		if( (info->width!=QSXGA_WIDTH)&&(info->preview_first_flag != 1) )
+		if( (info->width!=QSXGA_WIDTH) )
 		{  
-  		ret = sensor_s_relaunch_af_zone(sd);
-  		if (ret < 0) {
-  			vfe_dev_err("sensor_s_relaunch_af_zone err !\n");
-  			//return ret;
-  		}
-  		
-  		//msleep(100);
-  		ret = sensor_write(sd, 0x3022, 0x03);		//sensor_s_single_af
-  		if (ret < 0) {
-  			vfe_dev_err("sensor_s_single_af err !\n");
-  			//return ret;
-  		}
-  		
-  		if(info->auto_focus==1)
-  			sensor_s_continueous_af(sd, 1);
-		  
-		  msleep(100);
-		}
+	  		ret = sensor_s_relaunch_af_zone(sd);
+	  		if (ret < 0) {
+	  			vfe_dev_err("sensor_s_relaunch_af_zone err !\n");
+	  			//return ret;
+	  		}
+	  		
+	  		//msleep(100);
+	  		ret = sensor_write(sd, 0x3022, 0x03);		//sensor_s_single_af
+	  		if (ret < 0) {
+	  			vfe_dev_err("sensor_s_single_af err !\n");
+	  			//return ret;
+	  		}
+	  		
+	  		if(info->auto_focus==0)
+	  			sensor_s_continueous_af(sd, 1);
+			  
+			  msleep(100);
+			}
 		else
-		  msleep(150);
+		  	msleep(150);
 	} else {
     if (wsize->width > SVGA_WIDTH) {
       ret = sensor_set_capture_exposure(sd);
@@ -7920,12 +7925,55 @@ static struct cci_driver cci_drv = {
 	.data_width = CCI_BITS_8,
 };
 
+#ifdef OV5640_REG_SYS
+static int sys_cur_reg = 0;
+static ssize_t ov5640_reg_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	int tmp, value;
 
+	value = 0;
+	tmp = simple_strtoul(buf, NULL, 16);
+	if (tmp < 0xffff) {  			 // reg(0xFFFF)
+		sys_cur_reg = tmp;
+	}	
+	else {							 // reg-value(0xFFFF-0XFFFF)	
+		value = tmp & 0x0000FFFF;
+		sys_cur_reg= (tmp >> 16) & 0xFFFF;		
+		sensor_write(glb_sd, sys_cur_reg, value);
+	}
+	return count;
+}
+
+static ssize_t ov5640_reg_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	unsigned char value;
+	value = 0;
+	sensor_read(glb_sd, sys_cur_reg, &value);
+	return sprintf(buf, "reg[0x%x]=%x\n", sys_cur_reg, value);
+}
+
+static DEVICE_ATTR(ov5640_reg, S_IWUSR | S_IRUGO,
+					ov5640_reg_show, ov5640_reg_store);
+static struct attribute *ov5640_attributes[] = {
+	&dev_attr_ov5640_reg.attr,
+	NULL
+};
+static const struct attribute_group ov5640_attr_group = {
+	.attrs = ov5640_attributes,
+};
+
+struct kobject *ov5640_kobj;
+#endif
 static int sensor_probe(struct i2c_client *client,
       const struct i2c_device_id *id)
 {
   struct v4l2_subdev *sd;
   struct sensor_info *info;
+#ifdef OV5640_REG_SYS  
+  int ret;
+#endif
+
+  vfe_dev_dbg("%s %d\n", __func__, __LINE__);
 //  int ret;
   info = kzalloc(sizeof(struct sensor_info), GFP_KERNEL);
   if (info == NULL)
@@ -7937,12 +7985,28 @@ static int sensor_probe(struct i2c_client *client,
   info->af_first_flag = 1;
   info->init_first_flag = 1;
   info->auto_focus = 0;
+
+#ifdef OV5640_REG_SYS
+  ov5640_kobj = kobject_create_and_add("ov5640_debug", kernel_kobj);
+  if (!ov5640_kobj)
+  	return -ENOMEM;
+  ret = sysfs_create_group(ov5640_kobj, &ov5640_attr_group);
+  if (ret)
+  	kobject_put(ov5640_kobj);
+#endif
+
   return 0;
 }
 
 static int sensor_remove(struct i2c_client *client)
 {
 	struct v4l2_subdev *sd;
+
+#ifdef OV5640_REG_SYS
+	sysfs_remove_group(&client->dev.kobj, &ov5640_attr_group);	
+	kobject_put(ov5640_kobj);
+#endif
+
 	sd = cci_dev_remove_helper(client, &cci_drv);
 	printk("sensor_remove ov5640 sd = %p!\n",sd);
 	kfree(to_state(sd));
